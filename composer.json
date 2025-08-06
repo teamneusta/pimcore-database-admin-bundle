@@ -1,0 +1,35 @@
+{
+  "name": "teamneusta/pimcore-database-admin-bundle",
+  "description": "Database administration in the Pimcore admin backend.",
+  "license": "GPL-3.0-or-later",
+  "type": "pimcore-bundle",
+  "authors": [
+    {
+      "name": "team neusta GmbH",
+      "email": "info@team-neusta.de",
+      "homepage": "https://www.team-neusta.de/",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+    "php": "~8.1.0 || ~8.2.0 || ~8.3.0",
+    "pimcore/pimcore": "^11.5",
+    "vrana/adminer": "^4.17.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Neusta\\Pimcore\\DatabaseAdminBundle\\": "src/"
+    }
+  },
+  "config": {
+    "preferred-install": "dist",
+    "sort-packages": true
+  },
+  "extra": {
+    "pimcore": {
+      "bundles": [
+        "Neusta\\Pimcore\\DatabaseAdminBundle\\NeustaPimcoreDatabaseAdminBundle"
+      ]
+    }
+  }
+}

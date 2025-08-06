@@ -1,0 +1,7 @@
+pimcore_admin:
+    csrf_protection:
+        excluded_routes:
+            - 'neusta_database_admin_adminer_index'
+            - 'neusta_database_admin_adminer_proxy'
+            - 'neusta_database_admin_adminer_proxy_1'
+            - 'neusta_database_admin_adminer_proxy_2'
