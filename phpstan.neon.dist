@@ -1,3 +1,6 @@
+includes:
+	- phpstan-baseline.neon
+
 parameters:
 	level: 8
 
@@ -6,3 +9,6 @@ parameters:
 
 	bootstrapFiles:
 		- vendor/pimcore/pimcore/stubs/dynamic-constants.php
+
+	scanDirectories:
+		- vendor/vrana/adminer

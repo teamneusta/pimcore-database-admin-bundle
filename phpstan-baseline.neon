@@ -1,0 +1,56 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Call to method database\\(\\) on an unknown class AdminerPimcore\\.$#"
+			count: 1
+			path: src/Controller/Admin/AdminerController.php
+
+		-
+			message: "#^Instantiated class AdminerPimcore not found\\.$#"
+			count: 1
+			path: src/Controller/Admin/AdminerController.php
+
+		-
+			message: "#^Method AdminerPimcore\\:\\:credentials\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Controller/Admin/AdminerController.php
+
+		-
+			message: "#^Method AdminerPimcore\\:\\:css\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Controller/Admin/AdminerController.php
+
+		-
+			message: "#^Method AdminerPimcore\\:\\:database\\(\\) should return string but returns string\\|null\\.$#"
+			count: 1
+			path: src/Controller/Admin/AdminerController.php
+
+		-
+			message: "#^Method AdminerPimcore\\:\\:databases\\(\\) has parameter \\$flush with no type specified\\.$#"
+			count: 1
+			path: src/Controller/Admin/AdminerController.php
+
+		-
+			message: "#^Method AdminerPimcore\\:\\:databases\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Controller/Admin/AdminerController.php
+
+		-
+			message: "#^Method AdminerPimcore\\:\\:permanentLogin\\(\\) should return string but returns string\\|false\\.$#"
+			count: 1
+			path: src/Controller/Admin/AdminerController.php
+
+		-
+			message: "#^Parameter \\#1 \\$callback of function set_error_handler expects \\(callable\\(int, string, string, int\\)\\: bool\\)\\|null, Closure\\(\\)\\: void given\\.$#"
+			count: 1
+			path: src/Controller/Admin/AdminerController.php
+
+		-
+			message: "#^Parameter \\#1 \\$content of class Symfony\\\\Component\\\\HttpFoundation\\\\Response constructor expects string\\|null, string\\|false given\\.$#"
+			count: 1
+			path: src/Controller/Admin/AdminerController.php
+
+		-
+			message: "#^Parameter \\#1 \\$content of method Symfony\\\\Component\\\\HttpFoundation\\\\Response\\:\\:setContent\\(\\) expects string\\|null, string\\|false given\\.$#"
+			count: 1
+			path: src/Controller/Admin/AdminerController.php
