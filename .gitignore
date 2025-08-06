@@ -1,2 +1,18 @@
-/vendor
+# Composer
 /composer.lock
+/vendor/
+
+# Docker Compose
+/compose.override.yaml
+
+# PHP-CS-Fixer
+/.php-cs-fixer.cache
+
+#PHPStan
+/phpstan.neon
+
+# PHPUnit
+/.phpunit.result.cache
+/.phpunit.cache/
+/reports/
+/phpunit.xml

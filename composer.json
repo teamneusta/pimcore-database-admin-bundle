@@ -1,6 +1,6 @@
 {
   "name": "teamneusta/pimcore-database-admin-bundle",
-  "description": "Database administration in the Pimcore admin backend.",
+  "description": "Database administration inside the Pimcore admin backend.",
   "license": "GPL-3.0-or-later",
   "type": "pimcore-bundle",
   "authors": [
@@ -14,7 +14,19 @@
   "require": {
     "php": "~8.1.0 || ~8.2.0 || ~8.3.0",
     "pimcore/pimcore": "^11.5",
+    "symfony/config": "^6.4",
+    "symfony/dependency-injection": "^6.4",
+    "symfony/http-foundation": "^6.4",
+    "symfony/http-kernel": "^6.4",
+    "symfony/routing": "^6.4",
     "vrana/adminer": "^4.17.0"
+  },
+  "require-dev": {
+    "ergebnis/composer-normalize": "^2.45",
+    "friendsofphp/php-cs-fixer": "^3.71",
+    "phpstan/extension-installer": "^1.4",
+    "phpstan/phpstan": "^1.12",
+    "phpstan/phpstan-symfony": "^1.4"
   },
   "autoload": {
     "psr-4": {
@@ -22,6 +34,10 @@
     }
   },
   "config": {
+    "allow-plugins": {
+      "ergebnis/composer-normalize": true,
+      "phpstan/extension-installer": true
+    },
     "preferred-install": "dist",
     "sort-packages": true
   },
@@ -31,5 +47,19 @@
         "Neusta\\Pimcore\\DatabaseAdminBundle\\NeustaPimcoreDatabaseAdminBundle"
       ]
     }
+  },
+  "scripts": {
+    "cs:check": "@cs:fix --dry-run",
+    "cs:check:ci": "@cs:check --format=checkstyle",
+    "cs:fix": "php-cs-fixer fix --ansi --verbose --diff",
+    "phpstan": "phpstan analyse --ansi",
+    "phpstan:ci": "phpstan analyse --ansi --no-interaction --no-progress --error-format=github"
+  },
+  "scripts-descriptions": {
+    "cs:check": "Checks code style (but doesn't fix anything)",
+    "cs:check:ci": "Checks code style and creates output in GitHub format",
+    "cs:fix": "Checks and fixes code style",
+    "phpstan": "Checks for code smells",
+    "phpstan:ci": "Checks for code smells and creates output in GitHub format"
   }
 }

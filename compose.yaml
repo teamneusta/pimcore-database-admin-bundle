@@ -1,0 +1,5 @@
+services:
+  php:
+    image: pimcore/pimcore:php${PHP_VERSION:-8.2}-debug-latest
+    volumes:
+      - ./:/var/www/html/
