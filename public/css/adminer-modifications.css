@@ -18,6 +18,12 @@
     width:320px !important;
 }
 
+#lang {
+    top: -29px; !important;
+    left: -1px; !important;
+    width:320px; !important;
+}
+
 #content {
     margin-left: 360px !important;
 }

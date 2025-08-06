@@ -120,51 +120,34 @@ namespace {
     use Pimcore\Cache;
 
     if (!function_exists('adminer_object')) {
-        // adminer plugin
-        function adminer_object(): AdminerPimcore
+        function adminer_object(): Adminer\Plugins
         {
-            $pluginDir = PIMCORE_COMPOSER_PATH . '/vrana/adminer/plugins';
-
-            // required to run any plugin
-            require_once $pluginDir . '/plugin.php';
-
-            // autoloader
-            foreach (glob($pluginDir . '/*.php') as $filename) {
-                include_once $filename;
-            }
-
-            $plugins = [
-                new AdminerFrames(),
-                new AdminerDumpDate(),
-                new AdminerDumpJson(),
-                new AdminerDumpBz2(),
-                new AdminerDumpZip(),
-                new AdminerDumpXml(),
-                new AdminerDumpAlter(),
-            ];
-
-            // support for SSL (at least for PDO)
-            $driverOptions = Pimcore\Db::get()->getParams()['driverOptions'] ?? [];
-            $ssl = [
-                'key' => $driverOptions[PDO::MYSQL_ATTR_SSL_KEY] ?? null,
-                'cert' => $driverOptions[PDO::MYSQL_ATTR_SSL_CERT] ?? null,
-                'ca' => $driverOptions[PDO::MYSQL_ATTR_SSL_CA] ?? null,
-            ];
-            if (null !== $ssl['key'] || null !== $ssl['cert'] || null !== $ssl['ca']) {
-                $plugins[] = new AdminerLoginSsl($ssl);
-            }
-
-            class AdminerPimcore extends AdminerPlugin
+            class AdminerPimcore extends Adminer\Plugin
             {
                 public function name(): string
                 {
                     return '';
                 }
 
+                public function css(): array
+                {
+                    return ['adminer.css' => 'light'];
+                }
+
                 public function loginForm(): void
                 {
-                    parent::loginForm();
-                    echo '<script' . nonce() . ">document.querySelector('input[name=auth\\\\[db\\\\]]').value='" . $this->database() . "'; document.querySelector('form').submit()</script>";
+                    echo Adminer\script(
+                        <<<EOJS
+                        document.addEventListener(
+                            'DOMContentLoaded',
+                            function() {
+                                document.querySelector('input[name=auth\\\\[db\\\\]]').value='{$this->database()}';
+                                document.querySelector('form').submit();
+                            },
+                            true,
+                        );
+                        EOJS
+                    );
                 }
 
                 /**
@@ -227,7 +210,30 @@ namespace {
                 }
             }
 
-            return new AdminerPimcore($plugins);
+            $plugins = [
+                new AdminerPimcore(),
+                new AdminerFrames(true),
+                new AdminerDumpDate(),
+                new AdminerDumpJson(),
+                new AdminerDumpBz2(),
+                new AdminerDumpZip(),
+                new AdminerDumpXml(),
+                new AdminerDumpAlter(),
+            ];
+
+            // support for SSL (at least for PDO)
+            $driverOptions = Pimcore\Db::get()->getParams()['driverOptions'] ?? [];
+            $ssl = [
+                'key' => $driverOptions[PDO::MYSQL_ATTR_SSL_KEY] ?? null,
+                'cert' => $driverOptions[PDO::MYSQL_ATTR_SSL_CERT] ?? null,
+                'ca' => $driverOptions[PDO::MYSQL_ATTR_SSL_CA] ?? null,
+                'verify' => $driverOptions[PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT] ?? null,
+            ];
+            if (null !== $ssl['key'] || null !== $ssl['cert'] || null !== $ssl['ca']) {
+                $plugins[] = new AdminerLoginSsl($ssl);
+            }
+
+            return new Adminer\Plugins($plugins);
         }
     }
 }

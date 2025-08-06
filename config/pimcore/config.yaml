@@ -1,4 +1,10 @@
 pimcore_admin:
+    admin_csp_header:
+        exclude_paths:
+            - '@^/admin/external_adminer/@'
+            - '@^/admin/adminer/@'
+            - '@^/admin/externals/@'
+
     csrf_protection:
         excluded_routes:
             - 'neusta_database_admin_adminer_index'
