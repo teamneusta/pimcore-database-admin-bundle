@@ -20,7 +20,8 @@
     "symfony/http-foundation": "^6.4",
     "symfony/http-kernel": "^6.4",
     "symfony/routing": "^6.4",
-    "vrana/adminer": "^v5.3.0"
+    "vrana/adminer": "^v5.3",
+    "vrana/jush": "^v2.1"
   },
   "require-dev": {
     "ergebnis/composer-normalize": "^2.45",
