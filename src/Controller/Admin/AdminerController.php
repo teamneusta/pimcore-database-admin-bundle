@@ -15,7 +15,17 @@ namespace Neusta\Pimcore\DatabaseAdminBundle\Controller\Admin {
      */
     final class AdminerController extends UserAwareController implements KernelControllerEventInterface
     {
-        private string $adminerHome = '';
+        private const ADMINER_HOME = PIMCORE_COMPOSER_PATH . '/vrana/adminer';
+
+        public function onKernelControllerEvent(ControllerEvent $event): void
+        {
+            if (!$event->isMainRequest()) {
+                return;
+            }
+
+            // only for admins
+            $this->checkPermission('neusta_database_admin');
+        }
 
         #[Route('/admin/external_adminer/adminer', name: 'neusta_database_admin_adminer_index')]
         public function index(?Profiler $profiler): Response
@@ -23,14 +33,17 @@ namespace Neusta\Pimcore\DatabaseAdminBundle\Controller\Admin {
             $profiler?->disable();
 
             // disable the debug error handler while including adminer
-            set_error_handler(function () {});
+            set_error_handler(static fn () => true);
 
             try {
-                chdir($this->adminerHome . 'adminer');
+                chdir(self::ADMINER_HOME . '/adminer');
 
+                ob_implicit_flush(false);
                 ob_start();
-                require $this->adminerHome . 'adminer/index.php';
-                $content = ob_get_clean();
+
+                require self::ADMINER_HOME . '/adminer/index.php';
+
+                $content = ob_get_clean() ?: '';
             } finally {
                 restore_error_handler();
             }
@@ -43,55 +56,36 @@ namespace Neusta\Pimcore\DatabaseAdminBundle\Controller\Admin {
         #[Route('/admin/externals/{path}', name: 'neusta_database_admin_adminer_proxy_2', requirements: ['path' => '.*'], defaults: ['type' => 'external'])]
         public function proxy(Request $request): Response
         {
-            $response = new Response();
-            $content = '';
+            $path = $request->attributes->getString('path');
 
-            // proxy for resources
-            $path = $request->attributes->get('path');
-            if (preg_match("@\.(css|js|ico|png|jpg|gif)$@", $path)) {
-                if ('external' === $request->attributes->get('type')) {
-                    $path = '../' . $path;
-                }
-
-                if (str_starts_with($path, 'static/')) {
-                    $path = 'adminer/' . $path;
-                }
-
-                $filePath = $this->adminerHome . '/' . $path;
-
-                // it seems that CSS files need the right content-type (Chrome)
-                if (preg_match('@.css$@', $path)) {
-                    $response->headers->set('Content-Type', 'text/css');
-                } elseif (preg_match('@.js$@', $path)) {
-                    $response->headers->set('Content-Type', 'text/javascript');
-                }
-
-                if (is_file($filePath)) {
-                    $content = file_get_contents($filePath);
-
-                    if (preg_match('@default.css$@', $path)) {
-                        // append custom styles, because in Adminer everything is hardcoded
-                        $content .= file_get_contents($this->adminerHome . 'designs/konya/adminer.css');
-                        $content .= file_get_contents(PIMCORE_WEB_ROOT . '/bundles/neustapimcoredatabaseadmin/css/adminer-modifications.css');
-                    }
-                }
+            if (!preg_match("@\.(css|js|ico|png|jpg|gif)$@", $path)) {
+                return new Response('', Response::HTTP_NOT_FOUND);
             }
 
-            $response->setContent($content);
+            $path = match ($request->attributes->get('type')) {
+                'external' => '../' . $path,
+                default => 'adminer/' . $path,
+            };
 
-            return $this->mergeAdminerHeaders($response);
-        }
+            $filePath = self::ADMINER_HOME . '/' . $path;
 
-        public function onKernelControllerEvent(ControllerEvent $event): void
-        {
-            if (!$event->isMainRequest()) {
-                return;
+            if (!is_file($filePath) || !is_readable($filePath)) {
+                return new Response('', Response::HTTP_NOT_FOUND);
             }
 
-            // only for admins
-            $this->checkPermission('neusta_database_admin');
+            $content = file_get_contents($filePath) ?: '';
 
-            $this->adminerHome = PIMCORE_COMPOSER_PATH . '/vrana/adminer/';
+            if (str_ends_with($path, 'default.css')) {
+                // append custom styles, because in Adminer everything is hardcoded
+                $content .= file_get_contents(self::ADMINER_HOME . '/designs/konya/adminer.css');
+                $content .= file_get_contents(PIMCORE_WEB_ROOT . '/bundles/neustapimcoredatabaseadmin/css/adminer-modifications.css');
+            }
+
+            return new Response($content, Response::HTTP_OK, match (pathinfo($path, \PATHINFO_EXTENSION)) {
+                'css' => ['Content-Type' => 'text/css'],
+                'js' => ['Content-Type' => 'application/javascript'],
+                default => [],
+            });
         }
 
         /**
@@ -99,17 +93,18 @@ namespace Neusta\Pimcore\DatabaseAdminBundle\Controller\Admin {
          */
         private function mergeAdminerHeaders(Response $response): Response
         {
-            if (!headers_sent()) {
-                foreach (headers_list() as $header) {
-                    [$headerKey, $headerValue] = explode(':', $header, 2);
-
-                    if ($headerKey && $headerValue) {
-                        $response->headers->set($headerKey, $headerValue);
-                    }
-                }
-
-                header_remove();
+            if (headers_sent()) {
+                return $response;
             }
+
+            foreach (headers_list() as $header) {
+                if (str_contains($header, ':')) {
+                    [$headerKey, $headerValue] = explode(':', $header, 2);
+                    $response->headers->set(trim($headerKey), trim($headerValue), false);
+                }
+            }
+
+            header_remove();
 
             return $response;
         }
@@ -195,18 +190,13 @@ namespace {
                 {
                     $cacheKey = 'neusta_database_admin_databases';
 
-                    if (!$return = Cache::load($cacheKey)) {
-                        $return = Pimcore\Db::get()->fetchAllAssociative('SELECT SCHEMA_NAME FROM information_schema.SCHEMATA');
+                    if (!$databases = Cache::load($cacheKey)) {
+                        $databases = Pimcore\Db::get()->fetchFirstColumn('SELECT SCHEMA_NAME FROM information_schema.SCHEMATA');
 
-                        foreach ($return as &$ret) {
-                            $ret = $ret['SCHEMA_NAME'];
-                        }
-                        unset($ret);
-
-                        Cache::save($return, $cacheKey);
+                        Cache::save($databases, $cacheKey);
                     }
 
-                    return $return;
+                    return $databases;
                 }
             }
 
@@ -223,13 +213,13 @@ namespace {
 
             // support for SSL (at least for PDO)
             $driverOptions = Pimcore\Db::get()->getParams()['driverOptions'] ?? [];
-            $ssl = [
+            $ssl = array_filter([
                 'key' => $driverOptions[PDO::MYSQL_ATTR_SSL_KEY] ?? null,
                 'cert' => $driverOptions[PDO::MYSQL_ATTR_SSL_CERT] ?? null,
                 'ca' => $driverOptions[PDO::MYSQL_ATTR_SSL_CA] ?? null,
                 'verify' => $driverOptions[PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT] ?? null,
-            ];
-            if (null !== $ssl['key'] || null !== $ssl['cert'] || null !== $ssl['ca']) {
+            ]);
+            if ($ssl) {
                 $plugins[] = new AdminerLoginSsl($ssl);
             }
 

@@ -39,18 +39,3 @@ parameters:
 			message: "#^Method AdminerPimcore\\:\\:permanentLogin\\(\\) should return string but returns string\\|false\\.$#"
 			count: 1
 			path: src/Controller/Admin/AdminerController.php
-
-		-
-			message: "#^Parameter \\#1 \\$callback of function set_error_handler expects \\(callable\\(int, string, string, int\\)\\: bool\\)\\|null, Closure\\(\\)\\: void given\\.$#"
-			count: 1
-			path: src/Controller/Admin/AdminerController.php
-
-		-
-			message: "#^Parameter \\#1 \\$content of class Symfony\\\\Component\\\\HttpFoundation\\\\Response constructor expects string\\|null, string\\|false given\\.$#"
-			count: 1
-			path: src/Controller/Admin/AdminerController.php
-
-		-
-			message: "#^Parameter \\#1 \\$content of method Symfony\\\\Component\\\\HttpFoundation\\\\Response\\:\\:setContent\\(\\) expects string\\|null, string\\|false given\\.$#"
-			count: 1
-			path: src/Controller/Admin/AdminerController.php
