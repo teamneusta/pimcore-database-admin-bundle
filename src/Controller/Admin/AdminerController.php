@@ -209,6 +209,8 @@ namespace {
                 new AdminerDumpZip(),
                 new AdminerDumpXml(),
                 new AdminerDumpAlter(),
+                new AdminerEnumOption(),
+                new AdminerTablesFilter(),
             ];
 
             // support for SSL (at least for PDO)
