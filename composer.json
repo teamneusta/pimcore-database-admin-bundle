@@ -1,7 +1,7 @@
 {
   "name": "teamneusta/pimcore-database-admin-bundle",
   "description": "Database administration inside the Pimcore admin backend.",
-  "license": "GPL-3.0-or-later",
+  "license": "MIT",
   "type": "pimcore-bundle",
   "authors": [
     {
@@ -9,17 +9,22 @@
       "email": "info@team-neusta.de",
       "homepage": "https://www.team-neusta.de/",
       "role": "Developer"
+    },
+    {
+      "name": "Jacob Dreesen",
+      "email": "j.dreesen@neusta.de",
+      "role": "Developer"
     }
   ],
   "require": {
-    "php": "~8.1.0 || ~8.2.0 || ~8.3.0",
+    "php": "~8.1.0 || ~8.2.0 || ~8.3.0 || ~8.4.0",
     "ext-pdo": "*",
-    "pimcore/pimcore": "^11.5",
-    "symfony/config": "^6.4",
-    "symfony/dependency-injection": "^6.4",
-    "symfony/http-foundation": "^6.4",
-    "symfony/http-kernel": "^6.4",
-    "symfony/routing": "^6.4",
+    "pimcore/pimcore": "^11.5 || ^12.0",
+    "symfony/config": "^6.4 || ^7.4",
+    "symfony/dependency-injection": "^6.4 || ^7.4",
+    "symfony/http-foundation": "^6.4 || ^7.4",
+    "symfony/http-kernel": "^6.4 || ^7.4",
+    "symfony/routing": "^6.4 || ^7.4",
     "vrana/adminer": "^v5.3",
     "vrana/jush": "^v2.1"
   },
@@ -28,7 +33,8 @@
     "friendsofphp/php-cs-fixer": "^3.71",
     "phpstan/extension-installer": "^1.4",
     "phpstan/phpstan": "^1.12",
-    "phpstan/phpstan-symfony": "^1.4"
+    "phpstan/phpstan-symfony": "^1.4",
+    "pimcore/admin-ui-classic-bundle": "^1.0 || ^2.0"
   },
   "autoload": {
     "psr-4": {
@@ -38,7 +44,11 @@
   "config": {
     "allow-plugins": {
       "ergebnis/composer-normalize": true,
+      "php-http/discovery": true,
       "phpstan/extension-installer": true
+    },
+    "audit": {
+      "block-insecure": false
     },
     "preferred-install": "dist",
     "sort-packages": true
