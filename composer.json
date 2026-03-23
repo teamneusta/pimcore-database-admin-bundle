@@ -19,6 +19,7 @@
   "require": {
     "php": "~8.1.0 || ~8.2.0 || ~8.3.0 || ~8.4.0",
     "ext-pdo": "*",
+    "pimcore/admin-ui-classic-bundle": "^1.0 || ^2.0",
     "pimcore/pimcore": "^11.5 || ^12.0",
     "symfony/config": "^6.4 || ^7.4",
     "symfony/dependency-injection": "^6.4 || ^7.4",
@@ -29,12 +30,11 @@
     "vrana/jush": "^v2.1"
   },
   "require-dev": {
-    "ergebnis/composer-normalize": "^2.45",
-    "friendsofphp/php-cs-fixer": "^3.71",
-    "phpstan/extension-installer": "^1.4",
-    "phpstan/phpstan": "^1.12",
-    "phpstan/phpstan-symfony": "^1.4",
-    "pimcore/admin-ui-classic-bundle": "^1.0 || ^2.0"
+    "ergebnis/composer-normalize": "^2.50",
+    "friendsofphp/php-cs-fixer": "^3.94.2",
+    "phpstan/extension-installer": "^1.4.3",
+    "phpstan/phpstan": "^1.12.33",
+    "phpstan/phpstan-symfony": "^1.4.16"
   },
   "autoload": {
     "psr-4": {
