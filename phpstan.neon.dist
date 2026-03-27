@@ -12,3 +12,6 @@ parameters:
 
 	scanDirectories:
 		- vendor/vrana/adminer
+
+	dynamicConstantNames:
+		- PIMCORE_COMPOSER_PATH
