@@ -1,6 +1,6 @@
 # Pimcore Database Admin Bundle
 
-This bundle integrates [Adminer](https://www.adminer.org/) into the Pimcore 11 admin backend
+This bundle integrates [Adminer](https://www.adminer.org/) into the Pimcore 11 & 12 admin backend
 (just like it was until Pimcore 10).
 
 ## Installation
